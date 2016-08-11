@@ -44,7 +44,7 @@ class Model(object):
         self.turn = self.PLAYER2
         pass
 
-    def turn(self):
+    def tick(self):
         self.EventMakeTurn()
         pass
 

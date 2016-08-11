@@ -13,7 +13,7 @@ def main():
     model.newGame()
 
     while model.isGameOver() is False:
-        model.EventMakeTurn()
+        model.tick()
         pass
     pass
 
