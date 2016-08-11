@@ -1,7 +1,8 @@
 """
     This is MODEL
 """
-from Notification import Notification
+from Event import Event
+
 
 class Model(object):
     EMPTY = 0
@@ -13,14 +14,41 @@ class Model(object):
         self.grid = None
         self.turn = self.PLAYER1
 
-        self.initGrid()
+        self.EventNewGame = Event("NewGame")
+        self.EventMakeTurn = Event("MakeTurn")
+        self.EventGameOver = Event("GameOver")
+
+        self.__initGrid()
         pass
 
-    def initGrid(self):
+    def __initGrid(self):
         self.grid = [[self.EMPTY for x in range(3)] for x in range(3)]
         pass
 
-    def changePlayer(self):
+    def newGame(self):
+        self.turn = self.PLAYER1
+        self.__initGrid()
+
+        # self.__cheatGrid()
+
+        self.EventNewGame()
+        pass
+
+    def __cheatGrid(self):
+        self.grid = [
+            [self.PLAYER1, self.PLAYER1, self.PLAYER2],
+            [self.PLAYER2, self.PLAYER1, self.PLAYER1],
+            [self.PLAYER1, self.PLAYER2, self.EMPTY],
+            ]
+
+        self.turn = self.PLAYER2
+        pass
+
+    def turn(self):
+        self.EventMakeTurn()
+        pass
+
+    def __changePlayer(self):
         if self.turn == self.PLAYER1:
             self.turn = self.PLAYER2
             pass
@@ -43,9 +71,12 @@ class Model(object):
             pass
 
         self.grid[row][col] = self.turn
-        self.changePlayer()
+        self.__changePlayer()
 
-        Notification.notify("onMakeTurn")
+        if self.isGameOver() is True:
+            self.EventGameOver()
+            pass
+
         return True
         pass
 
@@ -66,7 +97,7 @@ class Model(object):
         return False
         pass
 
-    def checkWin(self, player):
+    def __checkWin(self, player):
         blocks = (
             ((0, 0), (0, 1), (0, 2)),
             ((1, 0), (1, 1), (1, 2)),
@@ -99,7 +130,7 @@ class Model(object):
         pass
 
     def isPlayer1Win(self):
-        if self.checkWin(self.PLAYER1) is True:
+        if self.__checkWin(self.PLAYER1) is True:
             return True
             pass
 
@@ -107,14 +138,14 @@ class Model(object):
         pass
 
     def isPlayer2Win(self):
-        if self.checkWin(self.PLAYER2) is True:
+        if self.__checkWin(self.PLAYER2) is True:
             return True
             pass
 
         return False
         pass
 
-    def haveEmptyCells(self):
+    def __haveEmptyCells(self):
         for row in self.grid:
             for cell in row:
                 if cell == self.EMPTY:
@@ -127,7 +158,7 @@ class Model(object):
         pass
 
     def isDraw(self):
-        if self.haveEmptyCells() is True:
+        if self.__haveEmptyCells() is True:
             return False
             pass
 

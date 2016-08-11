@@ -1,50 +1,72 @@
 """
     This is VIEW
 """
-from Notification import Notification
+
 
 class View(object):
-    def __init__(self, model):
+    def __init__(self, model, controller):
         self.model = model
+        self.controller = controller
 
-        Notification.addObserver(self, "onMakeTurn")
-        Notification.addObserver(self, "onGameOver")
+        self.symbols = {
+            self.model.EMPTY: "#",
+            self.model.PLAYER1: "X",
+            self.model.PLAYER2: "O"
+            }
 
-        self.update()
+        self.model.EventMakeTurn.addObserver(self._onMakeTurn)
+        self.model.EventGameOver.addObserver(self._onGameOver)
         pass
 
-    def onEvent(self, event):
-        if event == "onMakeTurn":
-            self.update()
-            pass
-        if event == "onGameOver":
-            self.onGameOver()
-            pass
-        pass
-
-    def update(self):
+    def __printGrid(self):
         grid = self.model.getGrid()
 
         print "+ 0 1 2 +"
         for row_index, row in enumerate(grid):
             print row_index,
             for cell in row:
-                if cell == self.model.EMPTY:
-                    print "#",
-                    pass
-                elif cell == self.model.PLAYER1:
-                    print "X",
-                    pass
-                elif cell == self.model.PLAYER2:
-                    print "O",
-                    pass
+                print self.symbols[cell],
                 pass
             print "|"
             pass
         print "+ - - - +"
+
         pass
 
-    def onGameOver(self):
+    def __printPrompt(self):
+        print "Player {player_symbol} turn <row, column>: ".format(
+            player_symbol=self.symbols[self.model.turn])
+        pass
+
+    def _onMakeTurn(self):
+        self.__printGrid()
+        self.__printPrompt()
+
+        while True:
+            try:
+                row, col = input()
+                pass
+            except Exception:
+                continue
+                pass
+
+            if row not in range(3):
+                continue
+                pass
+
+            if col not in range(3):
+                continue
+                pass
+
+            self.controller.turn(row, col)
+            break
+            pass
+
+        pass
+
+    def _onGameOver(self):
+        self.__printGrid()
+
         if self.model.isPlayer1Win() is True:
             print " = Player 1 Win ="
             pass

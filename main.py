@@ -2,13 +2,19 @@ from model import Model
 from view import View
 from controller import Controller
 
-def main():
-    print " Start for Tic Tac Toe MVC Game!!!"
-    model = Model()
-    view = View(model)
-    controller = Controller(model)
 
-    controller.work()
+def main():
+    print " = Tic Tac Toe MVC Game = "
+    model = Model()
+
+    controller = Controller(model)
+    view = View(model, controller)
+
+    model.newGame()
+
+    while model.isGameOver() is False:
+        model.EventMakeTurn()
+        pass
     pass
 
 if __name__ == "__main__":
